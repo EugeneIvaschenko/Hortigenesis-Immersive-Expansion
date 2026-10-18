@@ -1,12 +1,17 @@
 # Игнорируем временные файлы сборки C#
-Source/bin/
-Source/obj/
+bin/
+obj/
 
 # Настройки IDE (Visual Studio / Rider)
 .vs/
 .idea/
 *.user
 *.suo
+
+libs/Assembly-CSharp.dll
+libs/UnityEngine*.dll
+
+.gittoken
 
 
 # Assemblies/
