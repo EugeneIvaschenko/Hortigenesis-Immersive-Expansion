@@ -29,7 +29,6 @@
 					<li>Blunt</li>
 				</capacities>
 				<power>1</power>
-				<!-- Символический урон, чтобы движок не выдавал null reference -->
 				<cooldownTime>3</cooldownTime>
 				<linkedBodyPartsGroup>HeadAttackTool</linkedBodyPartsGroup>
 				<ensureLinkedBodyPartsGroupAlwaysUsable>true</ensureLinkedBodyPartsGroupAlwaysUsable>
@@ -47,7 +46,6 @@
 			<li>
 				<bodyGraphicData>
 					<texPath>Things/Pawn/Animal/Muffalo/Muffalo</texPath>
-					<!-- Временная текстура -->
 					<graphicClass>Graphic_Multi</graphicClass>
 					<drawSize>1.2</drawSize>
 				</bodyGraphicData>

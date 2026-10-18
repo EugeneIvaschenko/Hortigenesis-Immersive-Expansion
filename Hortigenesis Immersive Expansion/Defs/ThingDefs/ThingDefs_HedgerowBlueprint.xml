@@ -6,14 +6,12 @@
 		<description>Проект для посадки буйного кустарника. Хранительница рощи займется им, когда будет свободна.</description>
 		<category>Ethereal</category>
 		<entityDefToBuild>Plant_Hedgerow</entityDefToBuild>
-		<!-- Не имеет коллизии и физики -->
 		<thingClass>HortigenesisIE.Hedgerow.HedgerowBlueprint</thingClass>
 		<drawerType>MapMeshOnly</drawerType>
 		<graphicData>
 			<texPath>Things/Plant/Bush</texPath>
 			<graphicClass>Graphic_Random</graphicClass>
 			<color>(255, 255, 255, 150)</color>
-			<!-- Зеленый полупрозрачный цвет -->
 			<shaderType>Transparent</shaderType>
 		</graphicData>
 		<altitudeLayer>Blueprint</altitudeLayer>

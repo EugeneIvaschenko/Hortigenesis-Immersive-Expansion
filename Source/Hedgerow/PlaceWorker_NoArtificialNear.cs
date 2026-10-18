@@ -1,6 +1,4 @@
 ﻿using Verse;
-using RimWorld;
-using System.Collections.Generic;
 
 namespace HortigenesisIE.Hedgerow
 {

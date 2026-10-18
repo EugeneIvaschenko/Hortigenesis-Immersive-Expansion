@@ -18,7 +18,7 @@
 		<pathCost>50</pathCost>
 		<fillPercent>0.20</fillPercent>
 		<comps>
-			<li Class="HortigenesisIE.CompProperties_HedgerowCombat">
+			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowCombat">
 				<baseTrapChance>0.5</baseTrapChance>
 				<spikeDamage>5.0</spikeDamage>
 				<poisonSeverity>0.1</poisonSeverity>
@@ -28,7 +28,7 @@
 				<maxCharges>3</maxCharges>
 				<rechargeTicks>300</rechargeTicks>
 			</li>
-			<li Class="HortigenesisIE.CompProperties_HedgerowModifier">
+			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowModifier">
 				<mutateTicks>300</mutateTicks>
 				<profiles>
 
@@ -37,7 +37,6 @@
 						<label>Шипы</label>
 						<description>Наносит слабое кровотечение врагам.</description>
 						<iconPath>UI/Commands/Attack</iconPath>
-						<!-- Используем ванильную иконку меча -->
 					</li>
 
 					<li>
@@ -99,7 +98,7 @@
 			<MaxHitPoints>150</MaxHitPoints>
 			<Flammability>1</Flammability>
 		</statBases>
-		<pathCost>150</pathCost>
+		<pathCost>50</pathCost>
 		<fillPercent>0.20</fillPercent>
 		<placeWorkers>
 			<li>HortigenesisIE.Hedgerow.PlaceWorker_NoArtificialNear</li>
@@ -120,7 +119,6 @@
 		<defName>Designation_HedgerowModification</defName>
 		<label>modify hedgerow</label>
 		<description>Change the mutation of this hedgerow.</description>
-		<!-- Можешь позже нарисовать свою иконку, пока используем ванильную шестеренку/гаечный ключ -->
 		<texturePath>UI/Commands/Attack</texturePath>
 		<targetType>Thing</targetType>
 	</DesignationDef>

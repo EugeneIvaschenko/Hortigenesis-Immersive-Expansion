@@ -15,7 +15,6 @@
 			<li>ComfyTemperatureMax</li>
 		</displayedStats>
 		<hyperlinks>
-			<!-- Ссылка ведет на ThingDef расы дриады -->
 			<ThingDef>HortigenesisIE_Dryad_Grovekeeper</ThingDef>
 		</hyperlinks>
 	</GauranlenTreeModeDef>

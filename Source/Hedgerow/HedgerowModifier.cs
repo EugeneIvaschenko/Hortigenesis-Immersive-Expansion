@@ -1,10 +1,8 @@
 ﻿using RimWorld;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Verse;
 
-namespace HortigenesisIE
+namespace HortigenesisIE.Hedgerow
 {
     public enum HedgerowModType { None, Spikes, Poison, Juicy, Barrier }
 

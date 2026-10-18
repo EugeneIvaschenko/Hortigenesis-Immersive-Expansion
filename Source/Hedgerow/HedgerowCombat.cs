@@ -1,8 +1,7 @@
 ﻿using RimWorld;
-using System.Collections.Generic;
 using Verse;
 
-namespace HortigenesisIE
+namespace HortigenesisIE.Hedgerow
 {
     public class CompProperties_HedgerowCombat : CompProperties
     {
