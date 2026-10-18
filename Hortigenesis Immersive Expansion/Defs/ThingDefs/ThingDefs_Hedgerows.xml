@@ -22,9 +22,6 @@
 				<baseTrapChance>0.5</baseTrapChance>
 				<spikeDamage>5.0</spikeDamage>
 				<poisonSeverity>0.1</poisonSeverity>
-				<baseTrapChance>0.5</baseTrapChance>
-				<spikeDamage>5.0</spikeDamage>
-				<poisonSeverity>0.1</poisonSeverity>
 				<maxCharges>3</maxCharges>
 				<rechargeTicks>300</rechargeTicks>
 			</li>
@@ -67,6 +64,14 @@
 				</profiles>
 			</li>
 		</comps>
+		<modExtensions>
+			<li Class="HortigenesisIE.Hedgerow.DefModExt_HedgerowStats">
+				<plantWorkTicks>300</plantWorkTicks>
+				<initialGrowth>0.05</initialGrowth>
+				<woodCostToPlant>0</woodCostToPlant>
+				<maintainWorkTicks>250</maintainWorkTicks>
+			</li>
+		</modExtensions>
 		<placeWorkers>
 			<li>HortigenesisIE.Hedgerow.PlaceWorker_NoArtificialNear</li>
 		</placeWorkers>

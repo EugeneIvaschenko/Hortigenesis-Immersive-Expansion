@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<HortigenesisIE_MustBeFarFromArtificial>Нельзя сажать кустарник рядом с искусственными постройками.</HortigenesisIE_MustBeFarFromArtificial>
+	<HortigenesisIE_HedgerowPlantedAlready>Кустарник уже растет здесь.</HortigenesisIE_HedgerowPlantedAlready>
+	<HortigenesisIE_HedgerowTreeIsInTheWay>Дерево мешает посадке.</HortigenesisIE_HedgerowTreeIsInTheWay>
+	<HortigenesisIE_HedgerowNotGrowable>Здесь ничего не вырастет.</HortigenesisIE_HedgerowNotGrowable>
+	<HortigenesisIE_HedgerowProjectDesignated>Проект уже размещен.</HortigenesisIE_HedgerowProjectDesignated>
+	<HortigenesisIE_HedgerowOccupiedStructure>Место занято постройкой.</HortigenesisIE_HedgerowOccupiedStructure>
+	<HortigenesisIE_HedgerowTooCramped>Слишком тесно, нужно оставить хотя бы одну сторону пустой.</HortigenesisIE_HedgerowTooCramped>
+	
+	<!-- Кнопки управления -->
+	<HortigenesisIE_DesignatorPlantHedgerowLabel>Посадить буйный кустарник</HortigenesisIE_DesignatorPlantHedgerowLabel>
+	<HortigenesisIE_DesignatorPlantHedgerowDesc>Приказать дриадам посадить буйный кустарник в указанном месте.</HortigenesisIE_DesignatorPlantHedgerowDesc>
+	<HortigenesisIE_DesignatorPlantHedgerowStonyLabel>Посадить каменистый кустарник</HortigenesisIE_DesignatorPlantHedgerowStonyLabel>
+	<HortigenesisIE_DesignatorPlantHedgerowStonyDesc>Приказать дриадам посадить каменистый кустарник в указанном месте.</HortigenesisIE_DesignatorPlantHedgerowStonyDesc>
+</LanguageData>

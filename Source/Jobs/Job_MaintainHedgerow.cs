@@ -73,7 +73,8 @@ namespace HortigenesisIE.Jobs
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-            yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.Touch);
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch)
+                .FailOnDespawnedNullOrForbidden(TargetIndex.A);
 
             Toil maintain = ToilMaker.MakeToil("MaintainHedgerow");
             maintain.defaultCompleteMode = ToilCompleteMode.Never;
@@ -120,7 +121,10 @@ namespace HortigenesisIE.Jobs
                         workProgress = 0f;
 
                         // Если новая модификация - это шипы или яд, сразу даем полный магазин
-                        combatComp?.currentCharges = combatComp.Props.maxCharges;
+                        if (combatComp != null)
+                        {
+                            combatComp.currentCharges = combatComp.Props.maxCharges;
+                        }
                     }
                     return;
                 }
@@ -128,6 +132,38 @@ namespace HortigenesisIE.Jobs
                 // Если код дошел сюда, значит куст полностью цел, заряжен и мутирован.
                 actor.jobs.curDriver.ReadyForNextToil();
             };
+
+            // ДОБАВЛЯЕМ УМНЫЙ ПРОГРЕСС-БАР
+            maintain.WithProgressBar(TargetIndex.A, delegate
+            {
+                Thing bush = TargetThingA;
+                if (bush == null) return 0f;
+
+                // Если чиним: полоска показывает текущее здоровье / максимальное
+                if (bush.HitPoints < bush.MaxHitPoints)
+                {
+                    return (float)bush.HitPoints / bush.MaxHitPoints;
+                }
+
+                var combatComp = bush.TryGetComp<CompHedgerowCombat>();
+                // Если перезаряжаем: полоска показывает текущие тики / тики для перезарядки
+                if (combatComp != null && combatComp.currentCharges < combatComp.Props.maxCharges)
+                {
+                    return workProgress / combatComp.Props.rechargeTicks;
+                }
+
+                var modComp = bush.TryGetComp<CompHedgerowModifier>();
+                DesignationDef desDef = DefDatabase<DesignationDef>.GetNamed("Designation_HedgerowModification");
+                Designation des = maintain.actor.Map.designationManager.DesignationOn(bush, desDef);
+
+                // Если мутируем: полоска показывает текущие тики / тики для мутации
+                if (des != null && modComp != null && modComp.targetMod != HedgerowModType.None)
+                {
+                    return workProgress / modComp.Props.mutateTicks;
+                }
+
+                return 1f; // Все задачи выполнены
+            });
 
             yield return maintain;
         }

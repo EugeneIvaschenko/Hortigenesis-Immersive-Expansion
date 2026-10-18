@@ -21,7 +21,7 @@ namespace HortigenesisIE.Hedgerow
                     // Проверяем наличие искусственных зданий (стены, станки и т.д.)
                     if (t.def.category == ThingCategory.Building && t.def.building != null && t.def.building.isNaturalRock == false)
                     {
-                        return new AcceptanceReport("Нельзя сажать оградительные растения рядом с постройками.");
+                        return new AcceptanceReport("HortigenesisIE_MustBeFarFromArtificial".Translate());
                     }
                 }
             }

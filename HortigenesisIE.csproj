@@ -21,6 +21,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Hortigenesis Immersive Expansion\Languages\English\Keyed\" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy /Y &quot;$(TargetDir)$(TargetName).dll&quot; &quot;C:\Users\Xiaomi\source\repos\HortigenesisIE\Hortigenesis Immersive Expansion\Assemblies&quot;" />
   </Target>

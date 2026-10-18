@@ -8,7 +8,7 @@
 			<li>
 				<label>Slept on sacred ground</label>
 				<description>Slept on sacred ground.</description>
-				<baseMoodEffect>1</baseMoodEffect>
+				<baseMoodEffect>0</baseMoodEffect>
 			</li>
 		</stages>
 	</ThoughtDef>

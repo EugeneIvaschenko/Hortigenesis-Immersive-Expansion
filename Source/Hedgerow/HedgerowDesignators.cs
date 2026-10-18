@@ -11,8 +11,8 @@ namespace HortigenesisIE.Hedgerow
 
         public Designator_PlaceHedgerow()
         {
-            this.defaultLabel = "Проект: Буйный кустарник";
-            this.defaultDesc = "Разместить проект для посадки дриадой.";
+            this.defaultLabel = "HortigenesisIE_DesignatorPlantHedgerowLabel".Translate();
+            this.defaultDesc = "HortigenesisIE_DesignatorPlantHedgerowDesc".Translate();
             this.icon = DefDatabase<ThingDef>.GetNamed("Plant_Bush").uiIcon;
         }
     }
@@ -24,8 +24,8 @@ namespace HortigenesisIE.Hedgerow
 
         public Designator_PlaceHedgerowStony()
         {
-            this.defaultLabel = "Проект: Каменистый кустарник";
-            this.defaultDesc = "Разместить проект для каменистой почвы.";
+            this.defaultLabel = "HortigenesisIE_DesignatorPlantHedgerowStonyLabel".Translate();
+            this.defaultDesc = "HortigenesisIE_DesignatorPlantHedgerowStonyDesc".Translate();
             this.icon = DefDatabase<ThingDef>.GetNamed("Plant_Bush").uiIcon;
         }
     }
@@ -44,7 +44,7 @@ namespace HortigenesisIE.Hedgerow
 
             if (c.GetFirstThing(Map, ThingDef.Named("HedgerowProject_Blueprint")) != null)
             {
-                return "Проект уже размещен.";
+                return "HortigenesisIE_HedgerowProjectDesignated".Translate();
             }
 
             bool hasCultivatablePlant = false;
@@ -53,12 +53,12 @@ namespace HortigenesisIE.Hedgerow
                 // Нельзя ставить поверх стен
                 if (t.def.category == ThingCategory.Building && t.def.passability == Traversability.Impassable)
                 {
-                    return "Место занято постройкой.";
+                    return "HortigenesisIE_HedgerowOccupiedStructure".Translate();
                 }
                 if (t is Plant p)
                 {
-                    if (p.def.defName == "Plant_Hedgerow" || p.def.defName == "Plant_HedgerowStony") return "Кустарник уже растет здесь.";
-                    if (p.def.plant.IsTree) return "Дерево мешает посадке.";
+                    if (p.def.defName == "Plant_Hedgerow" || p.def.defName == "Plant_HedgerowStony") return "HortigenesisIE_HedgerowPlantedAlready".Translate();
+                    if (p.def.plant.IsTree) return "HortigenesisIE_HedgerowTreeIsInTheWay".Translate();
                     if (p.def.plant.harvestedThingDef != null) hasCultivatablePlant = true;
                 }
             }
@@ -66,7 +66,7 @@ namespace HortigenesisIE.Hedgerow
             //Проверяем плодородие только если класс этого требует
             if (!hasCultivatablePlant && this.RequiresFertility)
             {
-                if (Map.fertilityGrid.FertilityAt(c) <= 0f) return "Здесь ничего не вырастет.";
+                if (Map.fertilityGrid.FertilityAt(c) <= 0f) return "HortigenesisIE_HedgerowNotGrowable".Translate();
             }
 
             // ПРОВЕРКА НА ГНИЕНИЕ (как в TickLong)
@@ -100,8 +100,8 @@ namespace HortigenesisIE.Hedgerow
             }
 
             // Если условия нарушены — возвращаем текст ошибки (игрок увидит его на экране)
-            if (hasArtificialNear) return "Слишком близко к искусственным постройкам (куст сгниет).";
-            if (!hasEmptyCell) return "Слишком тесно, нужно оставить хотя бы одну сторону пустой (куст сгниет).";
+            if (hasArtificialNear) return "HortigenesisIE_MustBeFarFromArtificial".Translate();
+            if (!hasEmptyCell) return "HortigenesisIE_HedgerowTooCramped".Translate();
 
             return true;
         }

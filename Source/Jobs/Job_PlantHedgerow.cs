@@ -63,8 +63,6 @@ namespace HortigenesisIE.Jobs
     // 2. Исполнитель: Сам процесс работы дриады
     public class JobDriver_PlantHedgerow : JobDriver
     {
-        private const int WorkTicks = 300; // Длительность работы дриады (5 сек)
-
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             return pawn.Reserve(job.targetA, job, 1, -1, null, errorOnFailed);
@@ -72,71 +70,59 @@ namespace HortigenesisIE.Jobs
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            // 1. Защита от ошибок: прерываем работу, если чертеж исчез или был запрещен
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
 
-            // Шаг 1: Идем к месту проекта
-            yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.Touch);
+            // 2. Идем к чертежу (TargetA)
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch)
+                .FailOnDespawnedNullOrForbidden(TargetIndex.A);
 
-            // Шаг 2: Процесс работы (заполняется полоска)
-            Toil work = ToilMaker.MakeToil("WorkOnHedgerow");
-            work.initAction = () => { };
-            work.tickAction = () => { pawn.rotationTracker.FaceCell(TargetA.Cell); };
-            work.defaultCompleteMode = ToilCompleteMode.Delay;
-            work.defaultDuration = WorkTicks;
-            work.WithProgressBarToilDelay(TargetIndex.A);
-            work.PlaySustainerOrSound(() => SoundDefOf.Interact_Sow);
-            yield return work;
-
-            // Шаг 3: Мгновенное завершение работы и спавн объекта
-            Toil finish = ToilMaker.MakeToil("FinishHedgerow");
-            finish.initAction = () =>
+            // 3. Получаем деф создаваемого объекта из чертежа
+            ThingDef plantDef = null;
+            if (TargetA.Thing is Blueprint blueprint)
             {
-                Thing blueprint = this.TargetThingA;
-                string bpName = blueprint.def.defName;
-                IntVec3 cell = blueprint.Position;
-                Map map = pawn.Map;
+                plantDef = blueprint.def.entityDefToBuild as ThingDef;
+            }
 
-                blueprint.Destroy(DestroyMode.Vanish);
+            // Если по какой-то причине это не чертеж, используем фоллбэк
+            if (plantDef == null)
+            {
+                plantDef = ThingDef.Named("Plant_Hedgerow");
+            }
 
-                // Защита от внезапных построек
-                foreach (Thing t in cell.GetThingList(map))
+            // 4. Достаем наши настройки из XML (DefModExtension)
+            var stats = plantDef.GetModExtension<DefModExt_HedgerowStats>();
+
+            // Если расширение забыли прописать в XML, используем безопасные значения по умолчанию
+            int workTicks = stats != null ? stats.plantWorkTicks : 300;
+            float growth = stats != null ? stats.initialGrowth : 0.05f;
+
+            // 5. Процесс посадки (пешка стоит на месте с полоской прогресса)
+            Toil plantToil = new Toil();
+            plantToil.defaultCompleteMode = ToilCompleteMode.Delay;
+            plantToil.defaultDuration = workTicks; // Используем значение из XML
+            plantToil.WithProgressBarToilDelay(TargetIndex.A, false, -0.5f);
+            yield return plantToil;
+
+            // 6. Завершение работы: удаляем чертеж и спавним сам куст
+            Toil finalizePlanting = new Toil();
+            finalizePlanting.initAction = delegate
+            {
+                // Создаем куст на клетке чертежа
+                Thing plant = GenSpawn.Spawn(plantDef, TargetA.Cell, Map, WipeMode.Vanish);
+
+                // Устанавливаем стартовый рост из XML
+                if (plant is Plant p)
                 {
-                    if (t.def.category == ThingCategory.Building || t.def.passability == Traversability.Impassable) return;
+                    p.Growth = growth;
                 }
 
-                Plant oldPlant = cell.GetPlant(map);
-
-                // Базовые значения для голой земли
-                float inheritedGrowth = 0.05f;
-                ThingDef harvestDef = null;
-                float harvestYield = 0f;
-
-                if (oldPlant != null && oldPlant.def.defName != "Plant_Hedgerow" && oldPlant.def.defName != "Plant_HedgerowStony")
-                {
-                    if (oldPlant.def.plant.IsTree) return; // Дублирующая защита для ИИ
-
-                    // Наследуем рост В ЛЮБОМ СЛУЧАЕ, если это не дерево
-                    inheritedGrowth = oldPlant.Growth;
-
-                    // А вот урожай наследуем только если он есть
-                    if (oldPlant.def.plant.harvestedThingDef != null)
-                    {
-                        harvestDef = oldPlant.def.plant.harvestedThingDef;
-                        harvestYield = oldPlant.def.plant.harvestYield;
-                    }
-
-                    oldPlant.Destroy(DestroyMode.Vanish);
-                }
-
-                // Спавним финальный куст, узнав нужное имя через полиморфизм
-                string plantToSpawn = (bpName == "HedgerowStonyProject_Blueprint") ? "Plant_HedgerowStony" : "Plant_Hedgerow";
-                Plant_Hedgerow hedgerow = (Plant_Hedgerow)GenSpawn.Spawn(ThingDef.Named(plantToSpawn), cell, map);
-                hedgerow.Growth = inheritedGrowth;
-                hedgerow.inheritedHarvestDef = harvestDef;
-                hedgerow.inheritedHarvestYield = harvestYield;
+                // Удаляем чертеж
+                TargetA.Thing?.Destroy(DestroyMode.Vanish);
             };
-            finish.defaultCompleteMode = ToilCompleteMode.Instant;
-            yield return finish;
+            finalizePlanting.defaultCompleteMode = ToilCompleteMode.Instant;
+
+            yield return finalizePlanting;
         }
     }
 }
