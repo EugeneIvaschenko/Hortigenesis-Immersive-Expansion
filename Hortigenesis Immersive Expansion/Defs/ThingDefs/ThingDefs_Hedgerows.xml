@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<ThingDef ParentName="PlantBase">
+		<defName>Plant_Hedgerow</defName>
+		<label>буйный кустарник</label>
+		<description>Оградительное растение, замедляющее врагов. Мутирует, наделяясь особыми свойствами.</description>
+		<thingClass>HortigenesisIE.Hedgerow.Plant_Hedgerow</thingClass>
+		<category>Plant</category>
+		<graphicData>
+			<texPath>Things/Plant/Bush</texPath>
+			<graphicClass>Graphic_Random</graphicClass>
+		</graphicData>
+		<statBases>
+			<MaxHitPoints>150</MaxHitPoints>
+			<Flammability>0.8</Flammability>
+		</statBases>
+		<pathCost>50</pathCost>
+		<fillPercent>0.20</fillPercent>
+		<comps>
+			<li Class="HortigenesisIE.CompProperties_HedgerowCombat">
+				<baseTrapChance>0.5</baseTrapChance>
+				<spikeDamage>5.0</spikeDamage>
+				<poisonSeverity>0.1</poisonSeverity>
+				<baseTrapChance>0.5</baseTrapChance>
+				<spikeDamage>5.0</spikeDamage>
+				<poisonSeverity>0.1</poisonSeverity>
+				<maxCharges>3</maxCharges>
+				<rechargeTicks>300</rechargeTicks>
+			</li>
+			<li Class="HortigenesisIE.CompProperties_HedgerowModifier">
+				<mutateTicks>300</mutateTicks>
+				<profiles>
+
+					<li>
+						<modType>Spikes</modType>
+						<label>Шипы</label>
+						<description>Наносит слабое кровотечение врагам.</description>
+						<iconPath>UI/Commands/Attack</iconPath>
+						<!-- Используем ванильную иконку меча -->
+					</li>
+
+					<li>
+						<modType>Poison</modType>
+						<label>Яд</label>
+						<description>Отравляет врагов токсинами.</description>
+						<iconPath>UI/Commands/Attack</iconPath>
+					</li>
+
+					<li>
+						<modType>Juicy</modType>
+						<label>Сочный</label>
+						<description>Снижает воспламеняемость.</description>
+						<iconPath>UI/Commands/FireAtWill</iconPath>
+						<statOverrides>
+							<Flammability>0.05</Flammability>
+						</statOverrides>
+					</li>
+
+					<li>
+						<modType>Barrier</modType>
+						<label>Барьер</label>
+						<description>Значительно увеличивает укрытие (до 45%).</description>
+						<iconPath>UI/Commands/SquadAttack</iconPath>
+						<coverEffectiveness>0.45</coverEffectiveness>
+					</li>
+
+				</profiles>
+			</li>
+		</comps>
+		<placeWorkers>
+			<li>HortigenesisIE.Hedgerow.PlaceWorker_NoArtificialNear</li>
+		</placeWorkers>
+		<plant>
+			<fertilityMin>0.5</fertilityMin>
+			<fertilitySensitivity>1.0</fertilitySensitivity>
+			<growDays>5</growDays>
+			<visualSizeRange>1.0~1.3</visualSizeRange>
+			<blockAdjacentSow>false</blockAdjacentSow>
+		</plant>
+		<ingestible>
+			<preferability>NeverForNutrition</preferability>
+		</ingestible>
+		<selectable>true</selectable>
+	</ThingDef>
+
+	<ThingDef ParentName="PlantBase">
+		<defName>Plant_HedgerowStony</defName>
+		<label>каменистый буйный кустарник</label>
+		<description>Оградительное растение, способное расти на каменистой почве. Не имеет модификаций.</description>
+		<thingClass>HortigenesisIE.Hedgerow.Plant_Hedgerow</thingClass>
+		<category>Plant</category>
+		<graphicData>
+			<texPath>Things/Plant/Bush</texPath>
+			<graphicClass>Graphic_Random</graphicClass>
+			<color>(150, 150, 150)</color>
+		</graphicData>
+		<statBases>
+			<MaxHitPoints>150</MaxHitPoints>
+			<Flammability>1</Flammability>
+		</statBases>
+		<pathCost>150</pathCost>
+		<fillPercent>0.20</fillPercent>
+		<placeWorkers>
+			<li>HortigenesisIE.Hedgerow.PlaceWorker_NoArtificialNear</li>
+		</placeWorkers>
+		<plant>
+			<fertilityMin>0.0</fertilityMin>
+			<fertilitySensitivity>0.0</fertilitySensitivity>
+			<growDays>8</growDays>
+			<visualSizeRange>1.0~1.3</visualSizeRange>
+		</plant>
+		<ingestible>
+			<preferability>NeverForNutrition</preferability>
+		</ingestible>
+		<selectable>true</selectable>
+	</ThingDef>
+
+	<DesignationDef>
+		<defName>Designation_HedgerowModification</defName>
+		<label>modify hedgerow</label>
+		<description>Change the mutation of this hedgerow.</description>
+		<!-- Можешь позже нарисовать свою иконку, пока используем ванильную шестеренку/гаечный ключ -->
+		<texturePath>UI/Commands/Attack</texturePath>
+		<targetType>Thing</targetType>
+	</DesignationDef>
+	
+</Defs>

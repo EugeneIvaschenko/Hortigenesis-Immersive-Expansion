@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<DesignationDef>
+		<defName>Designation_HedgerowProject</defName>
+		<label>проект кустарника</label>
+		<description>Здесь дриада-хранительница посадит или окультурит буйный кустарник.</description>
+		<texturePath>UI/Designators/ZoneCreate_Growing</texturePath>
+		<targetType>Cell</targetType>
+	</DesignationDef>
+
+</Defs>

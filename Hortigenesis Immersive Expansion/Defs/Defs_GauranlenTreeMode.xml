@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<GauranlenTreeModeDef>
+		<defName>HortigenesisIE_TreeMode_Grovekeeper</defName>
+		<label>хранительница рощи</label>
+		<description>Дерево будет производить хранительниц рощи. Эти дриады специализируются на посадке и окультуривании защитных буйных кустарников.</description>
+		<pawnKindDef>HortigenesisIE_Dryad_Grovekeeper</pawnKindDef>
+
+		<drawPosition>(1, 0)</drawPosition>
+		<displayedStats>
+			<li>MaxHitPoints</li>
+			<li>MoveSpeed</li>
+			<li>ComfyTemperatureMin</li>
+			<li>ComfyTemperatureMax</li>
+		</displayedStats>
+		<hyperlinks>
+			<!-- Ссылка ведет на ThingDef расы дриады -->
+			<ThingDef>HortigenesisIE_Dryad_Grovekeeper</ThingDef>
+		</hyperlinks>
+	</GauranlenTreeModeDef>
+
+</Defs>

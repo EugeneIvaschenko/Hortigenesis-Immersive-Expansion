@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<ThingDef ParentName="DryadBase">
+		<defName>HortigenesisIE_Dryad_Grovekeeper</defName>
+		<label>хранительница рощи</label>
+		<description>Особая каста дриад, специализирующаяся на выращивании, окультуривании и поддержании защитных буйных кустарников.</description>
+		<statBases>
+			<MoveSpeed>3.5</MoveSpeed>
+			<MarketValue>200</MarketValue>
+			<ComfyTemperatureMin>-30</ComfyTemperatureMin>
+			<ComfyTemperatureMax>50</ComfyTemperatureMax>
+		</statBases>
+		<comps>
+			<li Class="HortigenesisIE.Dryads.CompProperties_Grovekeeper" />
+		</comps>
+		<race>
+			<lifeStageAges>
+				<li>
+					<def>AnimalAdult</def>
+					<minAge>0.0</minAge>
+				</li>
+			</lifeStageAges>
+		</race>
+		<tools>
+			<li>
+				<label>head</label>
+				<capacities>
+					<li>Blunt</li>
+				</capacities>
+				<power>1</power>
+				<!-- Символический урон, чтобы движок не выдавал null reference -->
+				<cooldownTime>3</cooldownTime>
+				<linkedBodyPartsGroup>HeadAttackTool</linkedBodyPartsGroup>
+				<ensureLinkedBodyPartsGroupAlwaysUsable>true</ensureLinkedBodyPartsGroupAlwaysUsable>
+			</li>
+		</tools>
+	</ThingDef>
+
+	<PawnKindDef ParentName="DryadKindBase">
+		<defName>HortigenesisIE_Dryad_Grovekeeper</defName>
+		<label>хранительница рощи</label>
+		<race>HortigenesisIE_Dryad_Grovekeeper</race>
+		<combatPower>10</combatPower>
+		<!-- Снижено, так как она не боец -->
+		<lifeStages>
+			<li>
+				<bodyGraphicData>
+					<texPath>Things/Pawn/Animal/Muffalo/Muffalo</texPath>
+					<!-- Временная текстура -->
+					<graphicClass>Graphic_Multi</graphicClass>
+					<drawSize>1.2</drawSize>
+				</bodyGraphicData>
+				<dessicatedBodyGraphicData>
+					<texPath>Things/Pawn/Animal/Muffalo/Dessicated_Muffalo</texPath>
+					<graphicClass>Graphic_Multi</graphicClass>
+					<drawSize>1.2</drawSize>
+				</dessicatedBodyGraphicData>
+			</li>
+		</lifeStages>
+	</PawnKindDef>
+
+</Defs>

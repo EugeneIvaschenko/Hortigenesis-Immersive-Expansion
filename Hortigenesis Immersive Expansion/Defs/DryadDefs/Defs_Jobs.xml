@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<JobDef>
+		<defName>Job_PlantHedgerow</defName>
+		<driverClass>HortigenesisIE.Jobs.JobDriver_PlantHedgerow</driverClass>
+		<reportString>сажает буйный кустарник.</reportString>
+	</JobDef>
+	<JobDef>
+		<defName>Job_MaintainHedgerow</defName>
+		<driverClass>HortigenesisIE.Jobs.JobDriver_MaintainHedgerow</driverClass>
+		<reportString>работа по обслуживанию существующих кустарников.</reportString>
+	</JobDef>
+</Defs>
