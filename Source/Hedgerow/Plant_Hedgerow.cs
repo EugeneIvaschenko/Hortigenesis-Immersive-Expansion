@@ -8,6 +8,7 @@ namespace HortigenesisIE.Hedgerow
         // Переменные для хранения унаследованного урожая
         public ThingDef inheritedHarvestDef;
         public float inheritedHarvestYield;
+        private HedgerowGrowthStage cachedStage;
 
         public override float GrowthRate
         {
@@ -29,6 +30,60 @@ namespace HortigenesisIE.Hedgerow
             base.ExposeData();
             Scribe_Defs.Look(ref inheritedHarvestDef, "inheritedHarvestDef");
             Scribe_Values.Look(ref inheritedHarvestYield, "inheritedHarvestYield", 0f);
+        }
+
+        public float CustomFillPercent
+        {
+            get
+            {
+                var combatComp = this.TryGetComp<CompHedgerowCombat>();
+                var modComp = this.TryGetComp<CompHedgerowModifier>();
+
+                if (combatComp?.CurrentStage == null) return this.def.fillPercent;
+
+                var stage = combatComp.CurrentStage;
+                float fill = stage.fillPercent;
+
+                if (modComp != null && stage.modOverrides != null)
+                {
+                    foreach (var over in stage.modOverrides)
+                    {
+                        if (over.modType == modComp.currentMod && over.fillPercent >= 0f)
+                        {
+                            fill = over.fillPercent;
+                            break;
+                        }
+                    }
+                }
+                return fill;
+            }
+        }
+
+        public int CustomPathCost
+        {
+            get
+            {
+                var combatComp = this.TryGetComp<CompHedgerowCombat>();
+                var modComp = this.TryGetComp<CompHedgerowModifier>();
+
+                if (combatComp?.CurrentStage == null) return this.def.pathCost;
+
+                var stage = combatComp.CurrentStage;
+                int cost = stage.pathCost;
+
+                if (modComp != null && stage.modOverrides != null)
+                {
+                    foreach (var over in stage.modOverrides)
+                    {
+                        if (over.modType == modComp.currentMod && over.pathCost >= 0)
+                        {
+                            cost = over.pathCost;
+                            break;
+                        }
+                    }
+                }
+                return cost;
+            }
         }
 
         public override void PlantCollected(Pawn by, PlantDestructionMode plantDestructionMode)
@@ -160,6 +215,44 @@ namespace HortigenesisIE.Hedgerow
                 HedgerowMapTracker.bushCounts[map.uniqueID] = 0;
             }
             HedgerowMapTracker.bushCounts[map.uniqueID]++;
+            UpdateCachedStage();
+        }
+
+        public override void TickLong()
+        {
+            base.TickLong(); // Здесь ванильный код прибавляет Growth
+            CheckForStageChange(); // А здесь мы проверяем, не перешли ли мы порог
+        }
+
+        // Наш кастомный триггер смены стадии
+        private void CheckForStageChange()
+        {
+            if (!this.Spawned) return;
+
+            var comp = this.TryGetComp<CompHedgerowCombat>();
+            if (comp == null) return;
+
+            var currentStage = comp.CurrentStage;
+
+            // Если стадия изменилась (перешли порог роста)
+            if (cachedStage != currentStage)
+            {
+                cachedStage = currentStage;
+
+                // Пинаем сетку проходимости для обновления кэша пути
+                this.Map.pathing.RecalculatePerceivedPathCostAt(this.Position);
+
+                // В будущем сюда можно добавить эффекты (звук роста, пыль и т.д.)
+            }
+        }
+
+        private void UpdateCachedStage()
+        {
+            var comp = this.TryGetComp<CompHedgerowCombat>();
+            if (comp != null)
+            {
+                cachedStage = comp.CurrentStage;
+            }
         }
 
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)

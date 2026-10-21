@@ -18,9 +18,10 @@
 		<pathCost>50</pathCost>
 		<fillPercent>0.20</fillPercent>
 		<comps>
+			<!-- 1. Динамические характеристики (Зависят от роста) -->
 			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowCombat">
 				<stages>
-					<!-- Росток (от 0% роста). Статы по нулям -->
+					<!-- СТАДИЯ 1: Росток (от 0% роста) -->
 					<li>
 						<minGrowth>0.0</minGrowth>
 						<baseTrapChance>0.0</baseTrapChance>
@@ -28,8 +29,13 @@
 						<poisonSeverity>0.0</poisonSeverity>
 						<maxCharges>0</maxCharges>
 						<rechargeTicks>99999</rechargeTicks>
+						<!-- Слабое укрытие и проходимость для ростка -->
+						<fillPercent>0.05</fillPercent>
+						<pathCost>10</pathCost>
+						<!-- Для ростка мутации еще не работают в полную силу, переопределений нет -->
 					</li>
-					<!-- Подросший куст (от 40% роста). Средние статы -->
+
+					<!-- СТАДИЯ 2: Подросший куст (от 40% роста) -->
 					<li>
 						<minGrowth>0.4</minGrowth>
 						<baseTrapChance>0.25</baseTrapChance>
@@ -37,8 +43,20 @@
 						<poisonSeverity>0.05</poisonSeverity>
 						<maxCharges>1</maxCharges>
 						<rechargeTicks>400</rechargeTicks>
+						<!-- Средние параметры для ОБЫЧНОГО куста -->
+						<fillPercent>0.20</fillPercent>
+						<pathCost>50</pathCost>
+						<modOverrides>
+							<!-- Если куст стал Барьерным, он уже дает больше укрытия -->
+							<li>
+								<modType>Barrier</modType>
+								<fillPercent>0.30</fillPercent>
+								<pathCost>80</pathCost>
+							</li>
+						</modOverrides>
 					</li>
-					<!-- Взрослый куст (от 99% роста). Максимум -->
+
+					<!-- СТАДИЯ 3: Взрослый куст (от 99% роста) -->
 					<li>
 						<minGrowth>0.99</minGrowth>
 						<baseTrapChance>0.5</baseTrapChance>
@@ -46,45 +64,54 @@
 						<poisonSeverity>0.1</poisonSeverity>
 						<maxCharges>3</maxCharges>
 						<rechargeTicks>300</rechargeTicks>
+						<!-- Максимум для ОБЫЧНОГО куста -->
+						<fillPercent>0.20</fillPercent>
+						<pathCost>50</pathCost>
+						<modOverrides>
+							<!-- Максимальные статы для Барьерного куста -->
+							<li>
+								<modType>Barrier</modType>
+								<fillPercent>0.45</fillPercent>
+								<pathCost>120</pathCost>
+							</li>
+						</modOverrides>
 					</li>
 				</stages>
 			</li>
+
+			<!-- 2. Идентичность мутаций и Статические статы (НЕ зависят от роста) -->
 			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowModifier">
 				<mutateTicks>300</mutateTicks>
 				<profiles>
-
 					<li>
 						<modType>Spikes</modType>
 						<label>Шипы</label>
 						<description>Наносит слабое кровотечение врагам.</description>
 						<iconPath>UI/Commands/Attack</iconPath>
 					</li>
-
 					<li>
 						<modType>Poison</modType>
 						<label>Яд</label>
 						<description>Отравляет врагов токсинами.</description>
 						<iconPath>UI/Commands/Attack</iconPath>
 					</li>
-
 					<li>
 						<modType>Juicy</modType>
 						<label>Сочный</label>
 						<description>Снижает воспламеняемость.</description>
 						<iconPath>UI/Commands/FireAtWill</iconPath>
+						<!-- Воспламеняемость не зависит от стадии роста, оставляем её здесь -->
 						<statOverrides>
 							<Flammability>0.05</Flammability>
 						</statOverrides>
 					</li>
-
 					<li>
 						<modType>Barrier</modType>
 						<label>Барьер</label>
 						<description>Значительно увеличивает укрытие (до 45%).</description>
 						<iconPath>UI/Commands/SquadAttack</iconPath>
-						<coverEffectiveness>0.45</coverEffectiveness>
+						<!-- <coverEffectiveness>0.45</coverEffectiveness> УДАЛЕНО! Теперь это работает через fillPercent в стадиях -->
 					</li>
-
 				</profiles>
 			</li>
 		</comps>

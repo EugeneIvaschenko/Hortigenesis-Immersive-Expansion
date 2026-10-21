@@ -121,10 +121,8 @@ namespace HortigenesisIE.Jobs
                         workProgress = 0f;
 
                         // Если новая модификация - это шипы или яд, сразу даем полный магазин
-                        if (combatComp != null)
-                        {
-                            combatComp.currentCharges = combatComp.CurrentStage.maxCharges;
-                        }
+                        combatComp?.currentCharges = combatComp.CurrentStage.maxCharges;
+                        bush.Map.pathing.RecalculatePerceivedPathCostAt(bush.Position);
                     }
                     return;
                 }

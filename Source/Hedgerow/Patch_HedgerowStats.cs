@@ -1,10 +1,13 @@
 ﻿using HarmonyLib;
 using RimWorld;
 using Verse;
+using Verse.AI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HortigenesisIE.Hedgerow
 {
-    // 1. Жесткая перезапись любых статов (Горение и т.д.)
+    // 1. Жесткая перезапись любых статов (Горение и т.д.) - Оставлено без изменений
     [HarmonyPatch(typeof(StatWorker), "GetValueUnfinalized")]
     public static class Patch_HedgerowStats
     {
@@ -31,7 +34,7 @@ namespace HortigenesisIE.Hedgerow
         }
     }
 
-    // 2. Точечная перезапись укрытия (Барьер)
+    // 2. Точечная перезапись укрытия (Барьер) - Адаптировано под стадии роста
     [HarmonyPatch(typeof(CoverUtility), "BaseBlockChance", [typeof(Thing)])]
     public static class Patch_HedgerowCover
     {
@@ -40,15 +43,26 @@ namespace HortigenesisIE.Hedgerow
         {
             if (__0 is Plant_Hedgerow plant)
             {
-                var comp = plant.TryGetComp<CompHedgerowModifier>();
-                if (comp != null && comp.currentMod != HedgerowModType.None)
+                // Забираем значение из умного геттера (учитывает стадию и мутацию)
+                __result = plant.CustomFillPercent;
+            }
+        }
+    }
+
+    // 3. Подменяем расчет стоимости пути для сетки ИИ - Новое
+    [HarmonyPatch(typeof(PathGrid), "CalculatedCostAt")]
+    public static class Patch_PathGrid_CalculatedCostAt
+    {
+        public static void Postfix(PathGrid __instance, IntVec3 c, bool perceivedStatic, IntVec3 prevCell, ref int __result, Map ___map)
+        {
+            List<Thing> thingList = ___map.thingGrid.ThingsListAt(c);
+            for (int i = 0; i < thingList.Count; i++)
+            {
+                if (thingList[i] is Plant_Hedgerow hedgerow)
                 {
-                    var profile = comp.Props.profiles?.FirstOrDefault(p => p.modType == comp.currentMod);
-                    // Если в XML указано укрытие >= 0, перезаписываем результат
-                    if (profile != null && profile.coverEffectiveness >= 0f)
-                    {
-                        __result = profile.coverEffectiveness;
-                    }
+                    // Ванильный метод уже прибавил стоимость из ThingDef.
+                    // Поэтому мы её отнимаем и прибавляем нашу кастомную.
+                    __result = __result - hedgerow.def.pathCost + hedgerow.CustomPathCost;
                 }
             }
         }
