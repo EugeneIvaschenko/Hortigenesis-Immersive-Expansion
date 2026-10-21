@@ -19,11 +19,35 @@
 		<fillPercent>0.20</fillPercent>
 		<comps>
 			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowCombat">
-				<baseTrapChance>0.5</baseTrapChance>
-				<spikeDamage>5.0</spikeDamage>
-				<poisonSeverity>0.1</poisonSeverity>
-				<maxCharges>3</maxCharges>
-				<rechargeTicks>300</rechargeTicks>
+				<stages>
+					<!-- Росток (от 0% роста). Статы по нулям -->
+					<li>
+						<minGrowth>0.0</minGrowth>
+						<baseTrapChance>0.0</baseTrapChance>
+						<spikeDamage>0.0</spikeDamage>
+						<poisonSeverity>0.0</poisonSeverity>
+						<maxCharges>0</maxCharges>
+						<rechargeTicks>99999</rechargeTicks>
+					</li>
+					<!-- Подросший куст (от 40% роста). Средние статы -->
+					<li>
+						<minGrowth>0.4</minGrowth>
+						<baseTrapChance>0.25</baseTrapChance>
+						<spikeDamage>2.5</spikeDamage>
+						<poisonSeverity>0.05</poisonSeverity>
+						<maxCharges>1</maxCharges>
+						<rechargeTicks>400</rechargeTicks>
+					</li>
+					<!-- Взрослый куст (от 99% роста). Максимум -->
+					<li>
+						<minGrowth>0.99</minGrowth>
+						<baseTrapChance>0.5</baseTrapChance>
+						<spikeDamage>5.0</spikeDamage>
+						<poisonSeverity>0.1</poisonSeverity>
+						<maxCharges>3</maxCharges>
+						<rechargeTicks>300</rechargeTicks>
+					</li>
+				</stages>
 			</li>
 			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowModifier">
 				<mutateTicks>300</mutateTicks>

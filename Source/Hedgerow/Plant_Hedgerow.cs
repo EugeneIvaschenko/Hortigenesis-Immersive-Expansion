@@ -9,6 +9,21 @@ namespace HortigenesisIE.Hedgerow
         public ThingDef inheritedHarvestDef;
         public float inheritedHarvestYield;
 
+        public override float GrowthRate
+        {
+            get
+            {
+                // Если здоровье меньше максимального — рост останавливается
+                if (this.HitPoints < this.MaxHitPoints)
+                {
+                    return 0f;
+                }
+
+                // Иначе возвращаем стандартный расчет RimWorld
+                return base.GrowthRate;
+            }
+        }
+
         public override void ExposeData()
         {
             base.ExposeData();

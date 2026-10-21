@@ -5,40 +5,48 @@ namespace HortigenesisIE.Hedgerow
 {
     public class CompProperties_HedgerowCombat : CompProperties
     {
-        public float baseTrapChance = 0.5f; // Базовый шанс 50%
-        public float spikeDamage = 5f;
-        public float poisonSeverity = 0.1f;
-
-        public int maxCharges = 3;
-        public int rechargeTicks = 300; // 5 секунд на восстановление одного заряда
+        public List<HedgerowGrowthStage> stages = new List<HedgerowGrowthStage>();
 
         public CompProperties_HedgerowCombat()
         {
-            compClass = typeof(CompHedgerowCombat);
+            this.compClass = typeof(CompHedgerowCombat);
         }
     }
 
     public class CompHedgerowCombat : ThingComp
     {
-        public CompProperties_HedgerowCombat Props => (CompProperties_HedgerowCombat)props;
+        public int currentCharges = 0;
 
-        // Текущее количество зарядов
-        public int currentCharges;
+        public CompProperties_HedgerowCombat Props => (CompProperties_HedgerowCombat)this.props;
 
-        public override void PostSpawnSetup(bool respawningAfterLoad)
+        // Умный геттер, который находит подходящую стадию в зависимости от текущего роста
+        public HedgerowGrowthStage CurrentStage
         {
-            base.PostSpawnSetup(respawningAfterLoad);
-            if (!respawningAfterLoad)
+            get
             {
-                currentCharges = Props.maxCharges; // Полный магазин при постройке
+                if (Props.stages.NullOrEmpty()) return null;
+
+                // Получаем доступ к растению
+                Plant plant = parent as Plant;
+                float currentGrowth = plant != null ? plant.Growth : 1f;
+
+                // Ищем максимальную стадию, до которой дорос куст
+                HedgerowGrowthStage activeStage = Props.stages[0];
+                foreach (var stage in Props.stages)
+                {
+                    if (currentGrowth >= stage.minGrowth)
+                    {
+                        activeStage = stage;
+                    }
+                }
+                return activeStage;
             }
         }
 
         public override void PostExposeData()
         {
             base.PostExposeData();
-            // Сохраняем заряды в сейв
-            Scribe_Values.Look(ref currentCharges, "currentCharges", Props.maxCharges);
+            Scribe_Values.Look(ref currentCharges, "currentCharges", 0);
         }
 
         public void CheckAndTriggerTrap(Pawn p)
@@ -52,18 +60,18 @@ namespace HortigenesisIE.Hedgerow
             currentCharges--;
 
             float dodgeModifier = p.GetStatValue(StatDefOf.TrapSpringChance);
-            float finalChance = Props.baseTrapChance * dodgeModifier;
+            float finalChance = CurrentStage.baseTrapChance * dodgeModifier;
 
             if (Rand.Value > finalChance) return;
 
             if (modComp.currentMod == HedgerowModType.Spikes)
             {
-                DamageInfo dinfo = new DamageInfo(DamageDefOf.Cut, Props.spikeDamage, 0f, -1f, parent);
+                DamageInfo dinfo = new DamageInfo(DamageDefOf.Cut, CurrentStage.spikeDamage, 0f, -1f, parent);
                 p.TakeDamage(dinfo);
             }
             else if (modComp.currentMod == HedgerowModType.Poison)
             {
-                HealthUtility.AdjustSeverity(p, HediffDefOf.ToxicBuildup, Props.poisonSeverity);
+                HealthUtility.AdjustSeverity(p, HediffDefOf.ToxicBuildup, CurrentStage.poisonSeverity);
             }
         }
 
@@ -107,7 +115,7 @@ namespace HortigenesisIE.Hedgerow
                 {
                     return $"Заряды ловушки: ИСТОЩЕНЫ (ждет дриаду)";
                 }
-                return $"Заряды ловушки: {currentCharges} / {Props.maxCharges}";
+                return $"Заряды ловушки: {currentCharges} / {CurrentStage.maxCharges}";
             }
 
             return null;
