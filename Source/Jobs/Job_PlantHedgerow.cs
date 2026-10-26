@@ -32,7 +32,7 @@ namespace HortigenesisIE.Jobs
             {
                 var blueprints = pawn.Map.listerThings.ThingsOfDef(ThingDef.Named(defName));
 
-                // Если чертежей такого типа на карте нет, listerThings может вернуть null, защищаемся от ошибки
+                // Если чертежей такого типа на карте нет, защищаемся от ошибки
                 if (blueprints == null) continue;
 
                 foreach (Thing bp in blueprints)
@@ -40,7 +40,9 @@ namespace HortigenesisIE.Jobs
                     // Пропускаем, если игрок нажал "Запретить" (крестик)
                     if (bp.IsForbidden(pawn)) continue;
 
-                    if (pawn.CanReserveAndReach(bp.Position, PathEndMode.Touch, Danger.Deadly))
+                    // ВАЖНО: Добавлена проверка pawn.CanReserve(bp). 
+                    // Это предотвращает бронирование одного чертежа несколькими дриадами.
+                    if (pawn.CanReserveAndReach(bp.Position, PathEndMode.Touch, Danger.Deadly) && pawn.CanReserve(bp))
                     {
                         float dist = pawn.Position.DistanceToSquared(bp.Position);
                         if (dist < closestDist)

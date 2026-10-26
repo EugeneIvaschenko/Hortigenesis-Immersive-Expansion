@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Verse;
+﻿using Verse;
 
 namespace HortigenesisIE.Hedgerow
 {
@@ -11,6 +10,7 @@ namespace HortigenesisIE.Hedgerow
         // Значение -1 означает "взять базовое значение стадии"
         public float fillPercent = -1f;
         public int pathCost = -1;
+        public float baseTrapChance = 0f;
         public float spikeDamage = -1f;
         public float poisonSeverity = -1f;
         public int maxCharges = -1;

@@ -31,7 +31,7 @@ namespace HortigenesisIE.Jobs
                 bool needsMutation = pawn.Map.designationManager.DesignationOn(bush, desDef) != null;
 
                 var combatComp = bush.TryGetComp<CompHedgerowCombat>();
-                if (combatComp != null && combatComp.currentCharges < combatComp.CurrentStage.maxCharges)
+                if (combatComp != null && combatComp.currentCharges < combatComp.MaxCharges)
                 {
                     needsRecharge = true;
                 }
@@ -97,10 +97,10 @@ namespace HortigenesisIE.Jobs
                 }
 
                 // ПРИОРИТЕТ 2: ПЕРЕЗАРЯДКА
-                if (combatComp != null && combatComp.currentCharges < combatComp.CurrentStage.maxCharges)
+                if (combatComp != null && combatComp.currentCharges < combatComp.MaxCharges)
                 {
                     workProgress++;
-                    if (workProgress >= combatComp.CurrentStage.rechargeTicks)
+                    if (workProgress >= combatComp.RechargeTicks)
                     {
                         combatComp.currentCharges++;
                         workProgress = 0f;
@@ -121,7 +121,7 @@ namespace HortigenesisIE.Jobs
                         workProgress = 0f;
 
                         // Если новая модификация - это шипы или яд, сразу даем полный магазин
-                        combatComp?.currentCharges = combatComp.CurrentStage.maxCharges;
+                        combatComp?.currentCharges = combatComp.MaxCharges;
                         bush.Map.pathing.RecalculatePerceivedPathCostAt(bush.Position);
                     }
                     return;
@@ -145,9 +145,9 @@ namespace HortigenesisIE.Jobs
 
                 var combatComp = bush.TryGetComp<CompHedgerowCombat>();
                 // Если перезаряжаем: полоска показывает текущие тики / тики для перезарядки
-                if (combatComp != null && combatComp.currentCharges < combatComp.CurrentStage.maxCharges)
+                if (combatComp != null && combatComp.currentCharges < combatComp.MaxCharges)
                 {
-                    return workProgress / combatComp.CurrentStage.rechargeTicks;
+                    return workProgress / combatComp.RechargeTicks;
                 }
 
                 var modComp = bush.TryGetComp<CompHedgerowModifier>();

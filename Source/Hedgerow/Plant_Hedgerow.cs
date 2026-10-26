@@ -1,26 +1,22 @@
 ﻿using RimWorld;
 using Verse;
+using System.Collections.Generic;
 
 namespace HortigenesisIE.Hedgerow
 {
     public class Plant_Hedgerow : Plant
     {
-        // Переменные для хранения унаследованного урожая
         public ThingDef inheritedHarvestDef;
         public float inheritedHarvestYield;
-        private HedgerowGrowthStage cachedStage;
+
+        // Кэшируем только индекс (число), не трогая сырые данные компонента
+        private int cachedStageIndex = -1;
 
         public override float GrowthRate
         {
             get
             {
-                // Если здоровье меньше максимального — рост останавливается
-                if (this.HitPoints < this.MaxHitPoints)
-                {
-                    return 0f;
-                }
-
-                // Иначе возвращаем стандартный расчет RimWorld
+                if (this.HitPoints < this.MaxHitPoints) return 0f;
                 return base.GrowthRate;
             }
         }
@@ -32,30 +28,13 @@ namespace HortigenesisIE.Hedgerow
             Scribe_Values.Look(ref inheritedHarvestYield, "inheritedHarvestYield", 0f);
         }
 
+        // Чистые геттеры: если компонента нет, берем ванильное значение из XML
         public float CustomFillPercent
         {
             get
             {
-                var combatComp = this.TryGetComp<CompHedgerowCombat>();
-                var modComp = this.TryGetComp<CompHedgerowModifier>();
-
-                if (combatComp?.CurrentStage == null) return this.def.fillPercent;
-
-                var stage = combatComp.CurrentStage;
-                float fill = stage.fillPercent;
-
-                if (modComp != null && stage.modOverrides != null)
-                {
-                    foreach (var over in stage.modOverrides)
-                    {
-                        if (over.modType == modComp.currentMod && over.fillPercent >= 0f)
-                        {
-                            fill = over.fillPercent;
-                            break;
-                        }
-                    }
-                }
-                return fill;
+                var comp = this.TryGetComp<CompHedgerowCombat>();
+                return comp != null ? comp.FillPercent : this.def.fillPercent;
             }
         }
 
@@ -63,26 +42,8 @@ namespace HortigenesisIE.Hedgerow
         {
             get
             {
-                var combatComp = this.TryGetComp<CompHedgerowCombat>();
-                var modComp = this.TryGetComp<CompHedgerowModifier>();
-
-                if (combatComp?.CurrentStage == null) return this.def.pathCost;
-
-                var stage = combatComp.CurrentStage;
-                int cost = stage.pathCost;
-
-                if (modComp != null && stage.modOverrides != null)
-                {
-                    foreach (var over in stage.modOverrides)
-                    {
-                        if (over.modType == modComp.currentMod && over.pathCost >= 0)
-                        {
-                            cost = over.pathCost;
-                            break;
-                        }
-                    }
-                }
-                return cost;
+                var comp = this.TryGetComp<CompHedgerowCombat>();
+                return comp != null ? comp.PathCost : this.def.pathCost;
             }
         }
 
@@ -90,7 +51,6 @@ namespace HortigenesisIE.Hedgerow
         {
             if (inheritedHarvestDef != null && this.Growth >= 0.65f)
             {
-                // 1. Спавним унаследованные ягоды/лекарства
                 int yieldAmount = GenMath.RoundRandom(this.Growth * inheritedHarvestYield);
                 if (yieldAmount > 0)
                 {
@@ -104,18 +64,13 @@ namespace HortigenesisIE.Hedgerow
                     }
                 }
 
-                // 2. Удаляем свойство урожая навсегда
                 inheritedHarvestDef = null;
                 inheritedHarvestYield = 0f;
 
-                // 3. Снимаем метку сбора
                 Designation des = Map.designationManager.DesignationOn(this, DesignationDefOf.HarvestPlant);
                 des?.Delete();
 
-                // 4. Обновляем графику
                 Map.mapDrawer.MapMeshDirty(Position, MapMeshFlagDefOf.Things);
-
-                // Прерываем базовый метод, чтобы куст не исчез/не откатился к ростку
                 return;
             }
 
@@ -149,7 +104,6 @@ namespace HortigenesisIE.Hedgerow
             }
         }
 
-        // Тернарное выражение вместо лишних if
         public override bool HarvestableNow => inheritedHarvestDef != null ? this.Growth >= 0.65f : base.HarvestableNow;
 
         public override IEnumerable<Gizmo> GetGizmos()
@@ -187,10 +141,7 @@ namespace HortigenesisIE.Hedgerow
         public override string GetInspectString()
         {
             string str = base.GetInspectString();
-            if (!string.IsNullOrEmpty(str))
-            {
-                str += "\n";
-            }
+            if (!string.IsNullOrEmpty(str)) str += "\n";
 
             CompHedgerowModifier comp = this.TryGetComp<CompHedgerowModifier>();
             if (comp != null && comp.currentMod == HedgerowModType.Barrier)
@@ -209,49 +160,31 @@ namespace HortigenesisIE.Hedgerow
         {
             base.SpawnSetup(map, respawningAfterLoad);
 
-            // Регистрируем куст на этой карте
             if (!HedgerowMapTracker.bushCounts.ContainsKey(map.uniqueID))
             {
                 HedgerowMapTracker.bushCounts[map.uniqueID] = 0;
             }
             HedgerowMapTracker.bushCounts[map.uniqueID]++;
-            UpdateCachedStage();
+
+            var comp = this.TryGetComp<CompHedgerowCombat>();
+            if (comp != null) cachedStageIndex = comp.CurrentStageIndex;
         }
 
         public override void TickLong()
         {
-            base.TickLong(); // Здесь ванильный код прибавляет Growth
-            CheckForStageChange(); // А здесь мы проверяем, не перешли ли мы порог
-        }
+            base.TickLong();
 
-        // Наш кастомный триггер смены стадии
-        private void CheckForStageChange()
-        {
             if (!this.Spawned) return;
 
             var comp = this.TryGetComp<CompHedgerowCombat>();
-            if (comp == null) return;
-
-            var currentStage = comp.CurrentStage;
-
-            // Если стадия изменилась (перешли порог роста)
-            if (cachedStage != currentStage)
-            {
-                cachedStage = currentStage;
-
-                // Пинаем сетку проходимости для обновления кэша пути
-                this.Map.pathing.RecalculatePerceivedPathCostAt(this.Position);
-
-                // В будущем сюда можно добавить эффекты (звук роста, пыль и т.д.)
-            }
-        }
-
-        private void UpdateCachedStage()
-        {
-            var comp = this.TryGetComp<CompHedgerowCombat>();
             if (comp != null)
             {
-                cachedStage = comp.CurrentStage;
+                int currentIndex = comp.CurrentStageIndex;
+                if (cachedStageIndex != currentIndex)
+                {
+                    cachedStageIndex = currentIndex;
+                    this.Map.pathing.RecalculatePerceivedPathCostAt(this.Position);
+                }
             }
         }
 
@@ -260,7 +193,6 @@ namespace HortigenesisIE.Hedgerow
             Map map = this.Map;
             base.DeSpawn(mode);
 
-            // Убираем куст из статистики карты
             if (map != null && HedgerowMapTracker.bushCounts.ContainsKey(map.uniqueID))
             {
                 HedgerowMapTracker.bushCounts[map.uniqueID]--;

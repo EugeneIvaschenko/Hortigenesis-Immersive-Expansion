@@ -18,61 +18,89 @@
 		<pathCost>50</pathCost>
 		<fillPercent>0.20</fillPercent>
 		<comps>
-			<!-- 1. Динамические характеристики (Зависят от роста) -->
+			<!-- Динамические характеристики (Зависят от роста и мутаций) -->
 			<li Class="HortigenesisIE.Hedgerow.CompProperties_HedgerowCombat">
 				<stages>
 					<!-- СТАДИЯ 1: Росток (от 0% роста) -->
 					<li>
 						<minGrowth>0.0</minGrowth>
+						<!-- Базовые мирные статы -->
+						<fillPercent>0.05</fillPercent>
+						<pathCost>10</pathCost>
 						<baseTrapChance>0.0</baseTrapChance>
 						<spikeDamage>0.0</spikeDamage>
 						<poisonSeverity>0.0</poisonSeverity>
 						<maxCharges>0</maxCharges>
 						<rechargeTicks>99999</rechargeTicks>
-						<!-- Слабое укрытие и проходимость для ростка -->
-						<fillPercent>0.05</fillPercent>
-						<pathCost>10</pathCost>
-						<!-- Для ростка мутации еще не работают в полную силу, переопределений нет -->
+						<!-- Мутации на ростке еще не действуют -->
 					</li>
-
+					
 					<!-- СТАДИЯ 2: Подросший куст (от 40% роста) -->
 					<li>
 						<minGrowth>0.4</minGrowth>
-						<baseTrapChance>0.25</baseTrapChance>
-						<spikeDamage>2.5</spikeDamage>
-						<poisonSeverity>0.05</poisonSeverity>
-						<maxCharges>1</maxCharges>
-						<rechargeTicks>400</rechargeTicks>
-						<!-- Средние параметры для ОБЫЧНОГО куста -->
+						<!-- Базовые статы для ОБЫЧНОГО не мутировавшего куста -->
 						<fillPercent>0.20</fillPercent>
 						<pathCost>50</pathCost>
+						<baseTrapChance>0.0</baseTrapChance>
+						<spikeDamage>0.0</spikeDamage>
+						<poisonSeverity>0.0</poisonSeverity>
+						<maxCharges>0</maxCharges> <!-- Дриады не обслуживают -->
+						<rechargeTicks>99999</rechargeTicks>
+						
 						<modOverrides>
-							<!-- Если куст стал Барьерным, он уже дает больше укрытия -->
 							<li>
 								<modType>Barrier</modType>
 								<fillPercent>0.30</fillPercent>
 								<pathCost>80</pathCost>
 							</li>
+							<li>
+								<modType>Spikes</modType>
+								<baseTrapChance>0.25</baseTrapChance>
+								<spikeDamage>2.5</spikeDamage>
+								<maxCharges>1</maxCharges> <!-- Появляются заряды -->
+								<rechargeTicks>400</rechargeTicks>
+							</li>
+							<li>
+								<modType>Poison</modType>
+								<baseTrapChance>0.25</baseTrapChance>
+								<poisonSeverity>0.05</poisonSeverity>
+								<maxCharges>1</maxCharges>
+								<rechargeTicks>400</rechargeTicks>
+							</li>
 						</modOverrides>
 					</li>
-
+					
 					<!-- СТАДИЯ 3: Взрослый куст (от 99% роста) -->
 					<li>
 						<minGrowth>0.99</minGrowth>
-						<baseTrapChance>0.5</baseTrapChance>
-						<spikeDamage>5.0</spikeDamage>
-						<poisonSeverity>0.1</poisonSeverity>
-						<maxCharges>3</maxCharges>
-						<rechargeTicks>300</rechargeTicks>
-						<!-- Максимум для ОБЫЧНОГО куста -->
+						<!-- Базовые статы для ОБЫЧНОГО не мутировавшего куста -->
 						<fillPercent>0.20</fillPercent>
 						<pathCost>50</pathCost>
+						<baseTrapChance>0.0</baseTrapChance>
+						<spikeDamage>0.0</spikeDamage>
+						<poisonSeverity>0.0</poisonSeverity>
+						<maxCharges>0</maxCharges>
+						<rechargeTicks>99999</rechargeTicks>
+						
 						<modOverrides>
-							<!-- Максимальные статы для Барьерного куста -->
 							<li>
 								<modType>Barrier</modType>
 								<fillPercent>0.45</fillPercent>
 								<pathCost>120</pathCost>
+							</li>
+							<li>
+								<modType>Spikes</modType>
+								<baseTrapChance>0.5</baseTrapChance>
+								<spikeDamage>5.0</spikeDamage>
+								<maxCharges>3</maxCharges>
+								<rechargeTicks>300</rechargeTicks>
+							</li>
+							<li>
+								<modType>Poison</modType>
+								<baseTrapChance>0.5</baseTrapChance>
+								<poisonSeverity>0.1</poisonSeverity>
+								<maxCharges>3</maxCharges>
+								<rechargeTicks>300</rechargeTicks>
 							</li>
 						</modOverrides>
 					</li>
